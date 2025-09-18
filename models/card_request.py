@@ -5,10 +5,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Integer, Numeric, DateTime
 from sqlalchemy.sql import func
 from typing import TYPE_CHECKING
+from models.status import Status
 
 if TYPE_CHECKING:
     from models.user import User
-    from models.status import Status
 
 
 class CardRequest(stt.DBBaseModel):

@@ -5,10 +5,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Date, ForeignKey, Integer, Numeric, DateTime, String
 from sqlalchemy.sql import func
 from typing import TYPE_CHECKING
+from models.card_request import CardRequest
 
 if TYPE_CHECKING:
     from models.address import Address
-    from models.card_request import CardRequest
 
 
 class User(stt.DBBaseModel):
