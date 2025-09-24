@@ -5,7 +5,7 @@ from pydantic import BaseModel as SCBaselModel, Field
 from pydantic import field_validator
 
 
-class CardRequestSchema(SCBaselModel):
+class CardRequestCreateSchema(SCBaselModel):
     name: str
     birth_date: date
     cpf: str
