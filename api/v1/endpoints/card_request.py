@@ -1,5 +1,6 @@
 from decimal import Decimal
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Response, status
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.address import Address
 from models.user import User
@@ -8,6 +9,8 @@ from schemas.card_request_create_schema import CardRequestCreateSchema
 from schemas.card_request_response_schema import CardRequestResponseSchema
 from core.deps import get_session
 import random
+
+from schemas.card_request_get_schema import CardRequestGetSchema
 
 router = APIRouter()
 
@@ -61,3 +64,24 @@ async def add_card_request(card_request: CardRequestCreateSchema, db: AsyncSessi
     db.add(new_card_request)
     await db.commit()
     return new_card_request
+
+
+@router.get('', status_code=status.HTTP_200_OK, response_model=list[CardRequestGetSchema])
+async def get_card_requests(db: AsyncSession = Depends(get_session)) -> list[CardRequestGetSchema]:
+    query = select(CardRequest).order_by(desc(CardRequest.created_at))
+    result = await db.execute(query)
+    card_requests: list[CardRequest] = result.scalars().unique().all()
+
+    if not card_requests:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    return [
+        CardRequestGetSchema(
+            id=request.id,
+            credit_score=request.credit_score,
+            credit_limit=request.credit_limit,
+            status=request.status.value,
+            username=request.user.name
+        )
+        for request in card_requests
+    ]
