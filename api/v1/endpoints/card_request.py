@@ -1,5 +1,5 @@
 from decimal import Decimal
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.address import Address
@@ -85,3 +85,16 @@ async def get_card_requests(db: AsyncSession = Depends(get_session)) -> list[Car
         )
         for request in card_requests
     ]
+
+
+@router.delete('/{card_request_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_card_request(card_request_id: int, db: AsyncSession = Depends(get_session)) -> None:
+    query = select(CardRequest).filter(CardRequest.id == card_request_id)
+    card_request: CardRequest | None = (await db.execute(query)).unique().scalar_one_or_none()
+
+    if not card_request:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'Solicitação de cartão de ID = {card_request_id} não encontrada.')
+
+    await db.delete(card_request)
+    await db.commit()
