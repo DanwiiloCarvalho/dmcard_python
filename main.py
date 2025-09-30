@@ -16,6 +16,22 @@ app = FastAPI(
 
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
+
+@app.middleware('http')
+async def db_unavailable_middleware(request: Request, call_next):
+    try:
+        response = await call_next(request)
+        return response
+    except (OSError, InterfaceError, DBAPIError):
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "detail": "Banco de dados indisponível. Tente novamente mais tarde.",
+                "timestamp": time(),
+                "path": str(request.url.path)
+            }
+        )
+
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app='main:app', host='0.0.0.0', port=8000, reload=True)
