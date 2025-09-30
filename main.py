@@ -14,6 +14,11 @@ app = FastAPI(
     version='1.0.0'
 )
 
+
+@app.get("/")
+async def root():
+    return {"message": "API DM Card está funcionando!"}
+
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
 
