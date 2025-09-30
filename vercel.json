@@ -11,10 +11,5 @@
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ],
-  "env": {
-    "APP_ENV": "production",
-    "API_V1_PREFIX": "/api/v1",
-    "DB_URL": "@db_url"
-  }
+  ]
 }
