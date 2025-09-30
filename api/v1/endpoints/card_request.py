@@ -15,7 +15,15 @@ from schemas.card_request_get_schema import CardRequestGetSchema
 router = APIRouter()
 
 
-@router.post('', status_code=status.HTTP_201_CREATED, response_model=CardRequestResponseSchema)
+@router.post(
+    '',
+    status_code=status.HTTP_201_CREATED,
+    response_model=CardRequestResponseSchema,
+    description='O usuário irá inserir suas informações '
+    'básicas e o sistema irá fazer uma análise da liberação do cartão, '
+    ' assim permitindo a solicitação de um cartão de crédito',
+    summary='Cria uma nova solicitação de cartão de crédito.'
+)
 async def add_card_request(card_request: CardRequestCreateSchema, db: AsyncSession = Depends(get_session)) -> CardRequestResponseSchema:
     new_address: Address = Address(
         street=card_request.address.street,
@@ -66,7 +74,13 @@ async def add_card_request(card_request: CardRequestCreateSchema, db: AsyncSessi
     return new_card_request
 
 
-@router.get('', status_code=status.HTTP_200_OK, response_model=list[CardRequestGetSchema])
+@router.get(
+    '',
+    status_code=status.HTTP_200_OK,
+    response_model=list[CardRequestGetSchema],
+    description='Lista todas as solicitações de cartões no sistema ordenadas por data de solicitação.',
+    summary='Lista todas as solicitações de cartões de crédito.'
+)
 async def get_card_requests(db: AsyncSession = Depends(get_session)) -> list[CardRequestGetSchema]:
     query = select(CardRequest).order_by(desc(CardRequest.created_at))
     result = await db.execute(query)
@@ -87,7 +101,12 @@ async def get_card_requests(db: AsyncSession = Depends(get_session)) -> list[Car
     ]
 
 
-@router.delete('/{card_request_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    '/{card_request_id}',
+    status_code=status.HTTP_204_NO_CONTENT,
+    description='Remove uma solicitação de cartão de crédito pelo ID da solicitação.',
+    summary='Remove uma solicitação de cartão de crédito.'
+)
 async def delete_card_request(card_request_id: int, db: AsyncSession = Depends(get_session)) -> None:
     query = select(CardRequest).filter(CardRequest.id == card_request_id)
     card_request: CardRequest | None = (await db.execute(query)).unique().scalar_one_or_none()
