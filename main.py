@@ -1,10 +1,9 @@
 from time import time
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request, status, __version__
+from fastapi.responses import HTMLResponse, JSONResponse
 from api.v1.api import api_router
 from core.settings import settings
 from sqlalchemy.exc import InterfaceError, DBAPIError
-from fastapi import status
 
 app = FastAPI(
     title='Desafio DM Card',
@@ -14,10 +13,35 @@ app = FastAPI(
     version='1.0.0'
 )
 
+html = f"""
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Desafio DMCard no Render</title>
+    </head>
+    <body>
+        <div class="bg-gray-200 p-4 rounded-lg shadow-lg">
+            <h1>Desafio DM Card</h1>
+            <h2>Versão do FastAPI: {__version__}</h2>
+            <p>Documentação:</p>
+            <ul>
+                <li><a href="/docs">/docs</a></li>
+                <li><a href="/redoc">/redoc</a></li>
+            </ul>
+        </div>
+    </body>
+</html>
+"""
 
-@app.get("/")
+
+@app.get(
+    '/',
+    tags=['Homepage'],
+    summary='Rota raíz',
+    description='Rota raíz para a página de apresentação da API, fornecendo os links para as documentações.'
+)
 async def root():
-    return {"message": "API DM Card está funcionando!"}
+    return HTMLResponse(html)
 
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
