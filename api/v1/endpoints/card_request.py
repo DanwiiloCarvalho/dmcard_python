@@ -7,7 +7,7 @@ from models.user import User
 from models.card_request import CardRequest
 from schemas.card_request_create_schema import CardRequestCreateSchema
 from schemas.card_request_response_schema import CardRequestResponseSchema
-from core.deps import get_session
+from core.deps import get_logged_user, get_session
 import random
 
 from schemas.card_request_get_schema import CardRequestGetSchema
@@ -24,7 +24,7 @@ router = APIRouter()
     ' assim permitindo a solicitação de um cartão de crédito',
     summary='Cria uma nova solicitação de cartão de crédito.'
 )
-async def add_card_request(card_request: CardRequestCreateSchema, db: AsyncSession = Depends(get_session)) -> CardRequestResponseSchema:
+async def add_card_request(card_request: CardRequestCreateSchema, db: AsyncSession = Depends(get_session), logged_user=Depends(get_logged_user)) -> CardRequestResponseSchema:
     new_address: Address = Address(
         street=card_request.address.street,
         number=card_request.address.number,
@@ -81,7 +81,7 @@ async def add_card_request(card_request: CardRequestCreateSchema, db: AsyncSessi
     description='Lista todas as solicitações de cartões no sistema ordenadas por data de solicitação.',
     summary='Lista todas as solicitações de cartões de crédito.'
 )
-async def get_card_requests(db: AsyncSession = Depends(get_session)) -> list[CardRequestGetSchema]:
+async def get_card_requests(db: AsyncSession = Depends(get_session), logged_user=Depends(get_logged_user)) -> list[CardRequestGetSchema]:
     query = select(CardRequest).order_by(desc(CardRequest.created_at))
     result = await db.execute(query)
     card_requests: list[CardRequest] = result.scalars().unique().all()
@@ -107,7 +107,7 @@ async def get_card_requests(db: AsyncSession = Depends(get_session)) -> list[Car
     description='Remove uma solicitação de cartão de crédito pelo ID da solicitação.',
     summary='Remove uma solicitação de cartão de crédito.'
 )
-async def delete_card_request(card_request_id: int, db: AsyncSession = Depends(get_session)) -> None:
+async def delete_card_request(card_request_id: int, db: AsyncSession = Depends(get_session), logged_user=Depends(get_logged_user)) -> None:
     query = select(CardRequest).filter(CardRequest.id == card_request_id)
     card_request: CardRequest | None = (await db.execute(query)).unique().scalar_one_or_none()
 
