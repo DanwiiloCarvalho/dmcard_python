@@ -38,7 +38,7 @@ class CardRequest(stt.DBBaseModel):
         back_populates='card_requests', lazy='joined')
 
     user: Mapped['User'] = relationship(
-        back_populates='card_requests', lazy='joined')
+        back_populates='card_requests', lazy='joined', cascade='all, delete')
 
     def __repr__(self):
         return f'ID usuário: {self.user_id}\nID Status: {self.status_id}'

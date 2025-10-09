@@ -37,10 +37,10 @@ class User(stt.DBBaseModel):
         DateTime, server_default=func.now(), onupdate=func.now())
 
     card_requests: Mapped[list['CardRequest']] = relationship(
-        back_populates='user', lazy='joined')
+        back_populates='user', lazy='joined', cascade='all, delete-orphan')
 
     address: Mapped['Address'] = relationship(
-        back_populates='users', lazy='joined')
+        back_populates='users', lazy='joined', cascade='all, delete')
 
     def __repr__(self):
         return f'Nome usuário: {self.name}\nRenda: {self.income}'

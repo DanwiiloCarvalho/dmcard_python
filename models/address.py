@@ -32,7 +32,7 @@ class Address(stt.DBBaseModel):
 
     users: Mapped[list['User'] | None] = relationship(
         back_populates='address',
-        lazy='joined')
+        lazy='joined', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'Nome usuário: {self.name}\nRenda: {self.income}'
