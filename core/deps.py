@@ -1,9 +1,9 @@
+from contextvars import Token
 from typing import Annotated, AsyncGenerator
-from sqlalchemy import select
 from core.settings import settings as stt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from core.database import Session
+from core.database import Session, session_context
 from core.auth import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.system_user import SystemUser
@@ -13,7 +13,11 @@ import jwt
 
 async def get_session() -> AsyncGenerator:
     async with Session() as session:
-        yield session
+        token: Token[AsyncSession] = session_context.set(session)
+        try:
+            yield session
+        finally:
+            session_context.reset(token)
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f'{stt.API_V1_PREFIX}/auth/login')
