@@ -1,0 +1,8 @@
+__pycache__
+.env
+.git
+.gitignore
+.python-version
+README.md
+LICENSE
+tests/
