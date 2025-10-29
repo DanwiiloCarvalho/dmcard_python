@@ -1,0 +1,37 @@
+services:
+  dmcard:
+    build:
+      context: .
+      dockerfile: dmcard.dockerfile
+    image: danwiilo/dmcard-api:v2
+    container_name: dmcard_compose
+    environment:
+      - API_V1_PREFIX=${API_V1_PREFIX}
+      - DB_URL=${DB_URL}
+      - ALGORITHM=${ALGORITHM}
+      - SECRET_KEY=${SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+    ports:
+      - 8080:8000
+    networks:
+      - compose_network
+    depends_on:
+      - postgres
+
+  postgres:
+    build:
+      context: .
+      dockerfile: pgdmcard.dockerfile
+    image: postgres:17-alpinecompose
+    container_name: postgres_compose
+    networks:
+      - compose_network
+    volumes:
+      - pg_compose:/var/lib/postgresql/data
+
+networks:
+  compose_network:
+    driver: bridge
+
+volumes:
+  pg_compose:
