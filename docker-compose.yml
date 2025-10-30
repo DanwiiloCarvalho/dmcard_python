@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: dmcard.dockerfile
-    image: danwiilo/dmcard-api:v2
+    image: danwiilo/dmcard-api:v3
     container_name: dmcard_compose
     environment:
       - API_V1_PREFIX=${API_V1_PREFIX}
