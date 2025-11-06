@@ -17,6 +17,8 @@ LABEL license="MIT License"
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+RUN useradd -m appuser
+
 COPY --from=builder /opt/venv ./opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
@@ -29,6 +31,9 @@ COPY ./models ./models
 COPY ./schemas ./schemas
 COPY ./main.py .
 COPY ./create_tables.py .
+
+RUN chown -R appuser /app
+USER appuser
 
 EXPOSE 8000
 CMD [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000" ]
