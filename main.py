@@ -6,7 +6,7 @@ from core.settings import settings
 from sqlalchemy.exc import InterfaceError, DBAPIError
 
 app = FastAPI(
-    title='Desafio DM Card',
+    title='DMCard',
     description='Aplicação que permitirá a solicitação de um cartão de crédito, '
     'onde o usuário irá inserir suas informações básicas e o sistema irá fazer uma '
     'análise da liberação do cartão.',
@@ -17,11 +17,11 @@ html = f"""
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Desafio DMCard no Render</title>
+        <title>DMCard</title>
     </head>
     <body>
         <div class="bg-gray-200 p-4 rounded-lg shadow-lg">
-            <h1>Desafio DM Card</h1>
+            <h1>DMCard</h1>
             <h2>Versão do FastAPI: {__version__}</h2>
             <p>Documentação:</p>
             <ul>
